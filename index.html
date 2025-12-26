@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEEP | Full Stack Engineer & Digital Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #010101;
+            --primary: #ffffff;
+            --accent: #3b82f6; 
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Snappy Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+            will-change: transform, opacity;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Cursor */
+        #custom-cursor {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        #cursor-follower {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Text Effects */
+        .text-stroke {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+            color: transparent;
+        }
+
+        /* Marquee */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-content {
+            display: flex;
+            animation: marquee 15s linear infinite;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            background: #fff;
+            z-index: 1000;
+            width: 0%;
+        }
+
+        .card-3d-wrap { perspective: 2500px; }
+        .card-3d { 
+            transform-style: preserve-3d; 
+            transition: transform 0.1s ease-out;
+        }
+
+        .code-window {
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+        }
+
+        .pulse-dot {
+            width: 6px; height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+            position: relative;
+        }
+        .pulse-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid #4ade80;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* Grain Effect */
+        .grain::after {
+            content: "";
+            position: fixed;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Repetitive_Noise_V2.png");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
+            animation: grain 8s steps(10) infinite;
+        }
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-3%, 3%); }
+            50% { transform: translate(3%, -3%); }
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Timeline Styles */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            height: 100%; width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: #010101; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="grain">
+
+    <div id="progress-bar"></div>
+    <div id="custom-cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-[100] px-8 py-8 flex justify-between items-center mix-blend-difference">
+        <div class="flex items-center space-x-6">
+            <a href="#" class="text-xl font-bold tracking-tighter uppercase">DEEP.</a>
+            <div class="hidden md:flex items-center space-x-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                <div class="pulse-dot"></div>
+                <span class="text-[8px] font-bold tracking-widest uppercase opacity-60">Status: Engineering</span>
+            </div>
+        </div>
+        
+        <div class="hidden md:flex space-x-12 text-[10px] font-bold tracking-[0.4em] uppercase opacity-50">
+            <a href="#hero" class="hover:opacity-100 transition-opacity">Index</a>
+            <a href="#about" class="hover:opacity-100 transition-opacity">Identity</a>
+            <a href="#services" class="hover:opacity-100 transition-opacity">Expertise</a>
+            <a href="#workflow" class="hover:opacity-100 transition-opacity">Method</a>
+            <a href="#projects" class="hover:opacity-100 transition-opacity">Archive</a>
+        </div>
+        
+        <div class="text-[9px] font-bold tracking-widest opacity-30 text-right">GWALIOR <br> INDIA</div>
+    </nav>
+
+    <main id="app">
+
+        <!-- HERO SECTION -->
+        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20">
+            <div class="reveal">
+                <span class="text-[11px] tracking-[1em] uppercase opacity-30 mb-8 block font-bold">Full Stack Engineer Deep</span>
+                <h1 class="text-[10vw] md:text-[13vw] font-serif leading-[0.75] tracking-tighter mb-20">
+                    <span class="block text-stroke mb-4 italic font-light">Architecting</span>
+                    <span class="block">The Digital.</span>
+                </h1>
+            </div>
+
+            <div class="card-3d-wrap w-full max-w-7xl px-4 reveal" style="transition-delay: 0.1s;">
+                <div class="card-3d relative aspect-[21/9] rounded-[40px] overflow-hidden group border border-white/5 shadow-[0_60px_120px_rgba(0,0,0,1)]" id="hero-card">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=2500&q=95" 
+                         class="w-full h-full object-cover grayscale brightness-50 transition-all duration-1000 group-hover:scale-105">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="code-window w-full max-w-2xl mx-4 transform group-hover:scale-110 transition-transform duration-1000">
+                            <div class="flex space-x-2 mb-8 border-b border-white/5 pb-4">
+                                <div class="w-3 h-3 rounded-full bg-red-500/30"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500/30"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500/30"></div>
+                                <span class="ml-4 text-[10px] font-mono opacity-20 italic">engineer.json</span>
+                            </div>
+                            <div class="font-mono text-sm space-y-1">
+                                <div class="text-blue-400">"engineer": {</div>
+                                <div class="pl-6 text-gray-400">"name": <span class="text-green-300">"Deep"</span>,</div>
+                                <div class="pl-6 text-gray-400">"origin": <span class="text-green-300">"Gwalior"</span>,</div>
+                                <div class="pl-6 text-gray-400">"stack": [<span class="text-green-300">"Next.js"</span>, <span class="text-green-300">"Node"</span>],</div>
+                                <div class="pl-6 text-gray-400">"mission": <span class="text-green-300">"Pixel Perfection"</span></div>
+                                <div class="text-blue-400">}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IDENTITY SECTION -->
+        <section id="about" class="py-60 px-6 md:px-24 bg-[#050505]">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
+                <div class="reveal">
+                    <h2 class="text-xs tracking-[0.6em] uppercase opacity-30 mb-16 font-bold">The Narrative</h2>
+                    <h3 class="text-5xl md:text-8xl font-serif leading-none mb-12 italic">Deep Dive <br><span class="opacity-30">Into Logic.</span></h3>
+                    <div class="space-y-8 text-xl opacity-40 leading-relaxed font-light">
+                        <p>
+                            Born in the historic heart of <span class="text-white">Gwalior</span>, I learned early on that great things are built on solid foundations. Whether it's the stone of a fort or the lines of a codebase, structure is everything.
+                        </p>
+                        <p>
+                            As a <span class="text-white">Full Stack Engineer</span>, I specialize in the architecture of complex web ecosystems. I bridge the gap between heavy backend logic and fluid frontend interfaces, ensuring every deployment is a masterpiece of speed and stability.
+                        </p>
+                        <p>
+                            My philosophy is simple: Code is art that solves problems.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-20 flex space-x-12 border-t border-white/5 pt-12">
+                        <div class="group">
+                            <div class="text-5xl font-serif mb-2 italic group-hover:translate-x-2 transition-transform">03+</div>
+                            <div class="text-[9px] tracking-widest uppercase opacity-30 font-bold">Years Grit</div>
+                        </div>
+                        <div class="group">
+                            <div class="text-5xl font-serif mb-2 italic group-hover:translate-x-2 transition-transform">50+</div>
+                            <div class="text-[9px] tracking-widest uppercase opacity-30 font-bold">Projects Live</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal relative" style="transition-delay: 0.1s;">
+                    <div class="aspect-[4/5] rounded-[40px] overflow-hidden grayscale brightness-75 transition-all duration-1000 hover:grayscale-0 group shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=95" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                    </div>
+                    <div class="absolute -bottom-10 -left-10 w-48 h-48 glass rounded-full flex items-center justify-center p-8 text-center rotate-12">
+                        <span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Synthesized in India</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES SECTION -->
+        <section id="services" class="py-60 px-6 md:px-24">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-32">
+                    <h2 class="text-xs tracking-[0.5em] uppercase opacity-30 mb-8 reveal">Core Expertise</h2>
+                    <h3 class="text-5xl md:text-8xl font-serif italic reveal">Technical <br><span class="opacity-30">Stack & Skills.</span></h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="glass p-12 rounded-3xl reveal">
+                        <h4 class="text-2xl font-bold uppercase tracking-widest mb-8 border-b border-white/10 pb-4">Frontend</h4>
+                        <p class="text-lg opacity-40 font-light mb-12">Building immersive interfaces with React and Next.js. Focused on performance, accessibility, and smooth GSAP animations.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">React</span>
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">Next.js</span>
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">Tailwind</span>
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">TypeScript</span>
+                        </div>
+                    </div>
+                    <div class="glass p-12 rounded-3xl reveal" style="transition-delay: 0.1s;">
+                        <h4 class="text-2xl font-bold uppercase tracking-widest mb-8 border-b border-white/10 pb-4">Backend</h4>
+                        <p class="text-lg opacity-40 font-light mb-12">Architecting robust server-side logic and database schemas with Node.js and Express. Scaling for global traffic.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">Node.js</span>
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">PostgreSQL</span>
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">Redis</span>
+                            <span class="px-4 py-2 border border-white/10 text-[9px] uppercase tracking-widest rounded-full">Docker</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKFLOW SECTION -->
+        <section id="workflow" class="py-60 px-6 md:px-24 bg-[#080808]">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between mb-32 items-end border-b border-white/5 pb-12">
+                    <h2 class="text-6xl md:text-9xl font-serif italic reveal leading-none">The <br>Method.</h2>
+                    <span class="text-[10px] tracking-[0.5em] uppercase opacity-30 mt-8 md:mt-0 reveal">Logic / Design / Deployment</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                    <div class="reveal p-8 border border-white/5 hover:bg-white/5 transition-colors rounded-3xl group">
+                        <span class="text-5xl font-serif italic opacity-10 mb-8 block group-hover:opacity-40 transition-opacity">01</span>
+                        <h4 class="text-lg font-bold uppercase tracking-widest mb-4">Discovery</h4>
+                        <p class="text-sm opacity-40 leading-relaxed font-light">Analyzing system requirements and user journeys to define the blueprint for the tech stack.</p>
+                    </div>
+                    <div class="reveal p-8 border border-white/5 hover:bg-white/5 transition-colors rounded-3xl group" style="transition-delay: 0.1s;">
+                        <span class="text-5xl font-serif italic opacity-10 mb-8 block group-hover:opacity-40 transition-opacity">02</span>
+                        <h4 class="text-lg font-bold uppercase tracking-widest mb-4">Drafting</h4>
+                        <p class="text-sm opacity-40 leading-relaxed font-light">Designing database schemas and low-fidelity wireframes to ensure logic and UX alignment.</p>
+                    </div>
+                    <div class="reveal p-8 border border-white/5 hover:bg-white/5 transition-colors rounded-3xl group" style="transition-delay: 0.2s;">
+                        <span class="text-5xl font-serif italic opacity-10 mb-8 block group-hover:opacity-40 transition-opacity">03</span>
+                        <h4 class="text-lg font-bold uppercase tracking-widest mb-4">Engineering</h4>
+                        <p class="text-sm opacity-40 leading-relaxed font-light">The core phase of writing optimized, high-performance code across the entire stack.</p>
+                    </div>
+                    <div class="reveal p-8 border border-white/5 hover:bg-white/5 transition-colors rounded-3xl group" style="transition-delay: 0.3s;">
+                        <span class="text-5xl font-serif italic opacity-10 mb-8 block group-hover:opacity-40 transition-opacity">04</span>
+                        <h4 class="text-lg font-bold uppercase tracking-widest mb-4">Polishing</h4>
+                        <p class="text-sm opacity-40 leading-relaxed font-light">Rigorous testing, bundle optimization, and deploying to cloud infrastructure for launch.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECH MARQUEE -->
+        <section class="py-24 border-y border-white/5 overflow-hidden bg-white/5">
+            <div class="marquee-container">
+                <div class="marquee-content space-x-24 text-4xl md:text-7xl font-serif italic opacity-10 uppercase">
+                    <span>Next.js</span> <span>Node.js</span> <span>TypeScript</span> <span>Tailwind</span> <span>MongoDB</span> <span>PostgreSQL</span> <span>AWS</span> <span>Docker</span> <span>Redis</span> <span>GraphQL</span>
+                </div>
+                
+        </section>
+
+        <!-- EXPERIENCE TIMELINE -->
+        <section class="py-60 px-6 md:px-24">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-xs tracking-[0.5em] uppercase opacity-30 mb-24 text-center reveal">The Evolution</h2>
+                
+                <div class="space-y-40">
+                    <div class="relative pl-12 timeline-item reveal">
+                        <span class="text-3xl font-serif italic opacity-20 block mb-6">2024 — Present</span>
+                        <h4 class="text-3xl font-bold uppercase tracking-widest mb-6">Freelance Developer</h4>
+                        <p class="text-xl opacity-40 leading-relaxed font-light">Currently leading full-stack transformations for global SaaS platforms. Responsible for technical strategy, cloud infrastructure, and core framework selection.</p>
+                    </div>
+                    <div class="relative pl-12 timeline-item reveal" style="transition-delay: 0.1s;">
+                        <span class="text-3xl font-serif italic opacity-20 block mb-6">2023 — 2024</span>
+                        <h4 class="text-3xl font-bold uppercase tracking-widest mb-6">Full Stack Developer</h4>
+                        <p class="text-xl opacity-40 leading-relaxed font-light">Engineered complex fintech dashboards and e-commerce solutions. Focused on real-time data streaming and database optimization.</p>
+                    </div>
+                    <div class="relative pl-12 timeline-item reveal" style="transition-delay: 0.2s;">
+                        <span class="text-3xl font-serif italic opacity-20 block mb-6">2022 — 2023</span>
+                        <h4 class="text-3xl font-bold uppercase tracking-widest mb-6">Frontend Specialist</h4>
+                        <p class="text-xl opacity-40 leading-relaxed font-light">Started the journey at a high-end creative agency in Gwalior. Mastered the art of translating complex designs into clean, accessible code.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS ARCHIVE -->
+        <section id="projects" class="py-60 px-6 md:px-24 bg-[#050505]">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between mb-32 items-end">
+                    <h2 class="text-6xl md:text-[9rem] font-serif italic leading-none reveal tracking-tighter">Live <br>Deployments.</h2>
+                    <span class="text-[10px] tracking-[0.5em] uppercase opacity-30 mt-8 md:mt-0 reveal">Selected Work</span>
+                </div>
+                
+                <div class="space-y-1">
+                    <div class="group relative py-20 border-b border-white/5 reveal hover:px-12 transition-all duration-700">
+                        <div class="flex items-center justify-between">
+                            <div class="z-10">
+                                <h3 class="text-4xl md:text-8xl font-serif group-hover:italic transition-all duration-500 tracking-tighter">Lumina Dashboard</h3>
+                                <div class="flex items-center space-x-6 mt-6 opacity-30 group-hover:opacity-100 transition-opacity">
+                                    <span class="text-[10px] tracking-widest font-bold uppercase">SaaS Engineering</span>
+                                    <div class="h-[1px] w-20 bg-white"></div>
+                                    <span class="text-[10px] font-mono">Next.js / Node.js</span>
+                                </div>
+                            </div>
+                            <div class="text-5xl font-serif opacity-5 group-hover:opacity-100 transition-opacity italic">01</div>
+                        </div>
+                    </div>
+                    <div class="group relative py-20 border-b border-white/5 reveal hover:px-12 transition-all duration-700">
+                        <div class="flex items-center justify-between">
+                            <div class="z-10">
+                                <h3 class="text-4xl md:text-8xl font-serif group-hover:italic transition-all duration-500 tracking-tighter">Aura Luxury Retail</h3>
+                                <div class="flex items-center space-x-6 mt-6 opacity-30 group-hover:opacity-100 transition-opacity">
+                                    <span class="text-[10px] tracking-widest font-bold uppercase">E-Commerce Engine</span>
+                                    <div class="h-[1px] w-20 bg-white"></div>
+                                    <span class="text-[10px] font-mono">Stripe / Next.js</span>
+                                </div>
+                            </div>
+                            <div class="text-5xl font-serif opacity-5 group-hover:opacity-100 transition-opacity italic">02</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="py-60 px-6 text-center bg-white text-black rounded-t-[60px] md:rounded-t-[120px] reveal shadow-[0_-50px_100px_rgba(255,255,255,0.05)]">
+            <div class="max-w-7xl mx-auto">
+                <span class="text-[11px] tracking-[0.8em] uppercase font-bold mb-20 block opacity-50">Ready to build the Infinite?</span>
+                <h2 class="text-7xl md:text-[14rem] font-serif tracking-tighter leading-none mb-32">Let's start <br><span class="italic font-light text-gray-400 text-stroke" style="-webkit-text-stroke: 1px rgba(0,0,0,0.2)">now.</span></h2>
+                
+                <a href="mailto:hello@deep.dev" class="text-4xl md:text-7xl border-b-2 border-black/10 pb-8 hover:border-black transition-all duration-500 inline-block font-light tracking-tighter">deshdeepdohare@gmail.com</a>
+                
+                <div class="mt-40 flex flex-col md:flex-row justify-center items-center gap-12 md:gap-32 text-[10px] font-bold tracking-[0.5em] uppercase opacity-40">
+                    <a href="https://github.com/deshdeepdohare-droid" class="hover:opacity-100 hover:tracking-[0.6em] transition-all duration-500">GitHub</a>
+                    <a href="https://www.linkedin.com/in/deshdeepdohare?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="hover:opacity-100 hover:tracking-[0.6em] transition-all duration-500">LinkedIn</a>
+                    <a href="https://x.com/d38862" class="hover:opacity-100 hover:tracking-[0.6em] transition-all duration-500">X</a>
+                    <a href="https://www.instagram.com/ennuiideep?igsh=MWV5NHR3d2ZjcGxkdQ==v" class="hover:opacity-100 hover:tracking-[0.6em] transition-all duration-500">Instagram</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-16 px-8 flex flex-col md:flex-row justify-between items-center opacity-30 text-[9px] tracking-[0.8em] uppercase font-bold bg-white text-black border-t border-black/5">
+        <div>Deep Visuals &copy; 2025 // Engineer</div>
+        <div class="italic">Gwalior — World</div>
+    </footer>
+
+    <script>
+        // PROGRESS BAR
+        window.onscroll = () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+
+        // CUSTOM CURSOR
+        const cursor = document.getElementById('custom-cursor');
+        const follower = document.getElementById('cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            }, 40);
+        });
+
+        document.querySelectorAll('a, button, .reveal, .card-3d, .glass').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                follower.style.transform = 'scale(2.5)';
+                follower.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                follower.style.borderColor = 'rgba(255,255,255,0.8)';
+            });
+            el.addEventListener('mouseleave', () => {
+                follower.style.transform = 'scale(1)';
+                follower.style.backgroundColor = 'transparent';
+                follower.style.borderColor = 'rgba(255,255,255,0.3)';
+            });
+        });
+
+        // 3D HERO PARALLAX
+        const heroCard = document.getElementById('hero-card');
+        document.addEventListener('mousemove', (e) => {
+            if (!heroCard) return;
+            const x = (window.innerWidth / 2 - e.clientX) / 80;
+            const y = (window.innerHeight / 2 - e.clientY) / 80;
+            heroCard.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        });
+
+        // REVEAL OBSERVER
+        function triggerReveals() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        window.onload = () => {
+            triggerReveals();
+            setTimeout(() => {
+                document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('active'));
+            }, 100);
+        };
+    </script>
+</body>
+</html>
